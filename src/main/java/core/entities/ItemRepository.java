@@ -17,6 +17,10 @@ public class ItemRepository {
   public List<Item> getItems() {
     return em.createQuery("select i from Item i", Item.class).getResultList();
   }
+
+  public Item getItem(String id) {
+    return em.find(Item.class, id);
+  }
   
   public String addItem(Item item) {
     String id = UUID.randomUUID().toString();

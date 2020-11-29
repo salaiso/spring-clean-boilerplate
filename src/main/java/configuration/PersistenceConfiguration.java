@@ -1,8 +1,12 @@
 package configuration;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -28,6 +32,12 @@ public class PersistenceConfiguration {
   @Value("${db.url}")
   private String dbUrl;
 
+  @Value("${db.driver}")
+  private String dbDriver;
+
+  @Value("${hibernate.dialect}")
+  private String hibernateDialect;
+
   @Bean
   public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
     LocalContainerEntityManagerFactoryBean em
@@ -39,20 +49,22 @@ public class PersistenceConfiguration {
     em.setJpaVendorAdapter(vendorAdapter);
 
     Properties properties = new Properties();
-    properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+    properties.setProperty("hibernate.dialect", hibernateDialect);
     em.setJpaProperties(properties);
 
     return em;
   }
 
   @Bean
-  public DataSource dataSource(){
-    DriverManagerDataSource dataSource = new DriverManagerDataSource();
-    dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-    dataSource.setUrl(dbUrl);
-    dataSource.setUsername(dbUser);
-    dataSource.setPassword(dbPassword);
-    return dataSource;
+  public DataSource dataSource() {
+
+    HikariConfig config = new HikariConfig();
+    config.setDriverClassName(dbDriver);
+    config.setJdbcUrl(dbUrl);
+    config.setUsername(dbUser);
+    config.setPassword(dbPassword);
+    HikariDataSource hikariDataSource = new HikariDataSource(config);
+    return hikariDataSource;
   }
 
   @Bean

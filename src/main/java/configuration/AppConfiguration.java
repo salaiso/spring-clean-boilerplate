@@ -2,12 +2,10 @@ package configuration;
 
 import core.entities.ItemRepository;
 import core.model.SessionData;
+import org.springframework.context.annotation.*;
 import usecases.AddItemUseCase;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import usecases.GetItemUseCase;
 import usecases.GetItemsUseCase;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.context.WebApplicationContext;
 
 @Configuration
@@ -27,6 +25,11 @@ public class AppConfiguration {
   @Bean
   public GetItemsUseCase getItemsUseCase(ItemRepository itemRepository) {
     return new GetItemsUseCase(itemRepository);
+  }
+
+  @Bean
+  public GetItemUseCase getItemUseCase(ItemRepository itemRepository) {
+    return new GetItemUseCase(itemRepository);
   }
 
   @Bean
